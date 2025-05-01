@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Bot Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0088cc;
+            --primary-dark: #006699;
+            --secondary: #1e90ff;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230088cc' stroke-width='2'><path d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/></svg>") 0 0, auto;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        button, a, .card {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230088cc' stroke-width='2'><path d='M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z'/></svg>") 0 0, pointer;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -50px;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -70px;
+            left: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-logo {
+            font-size: 3.5em;
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background-color: #d35400;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-top: 5px solid var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .card-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+        }
+
+        .card-body {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .card-body p {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-body i {
+            width: 25px;
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alerts-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .alert {
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--white);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s ease-out forwards;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background-color: var(--success);
+        }
+
+        .alert-danger {
+            background-color: var(--danger);
+        }
+
+        .alert-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .alert-close {
+            margin-left: 15px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary);
+            animation: loading 2s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            font-size: 3em;
+            color: var(--primary);
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .empty-message {
+            font-size: 1.2em;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .token-mask {
+            font-family: monospace;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .token-mask:hover::after {
+            content: "Click to reveal";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .toast-icon {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-indicator">
+        <div class="loading-bar"></div>
+    </div>
+
+    <div class="alerts-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span class="alert-icon">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+                        </span>
+                        {{ message }}
+                        <span class="alert-close" onclick="this.parentElement.remove()">×</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Telegram Bot Manager</h1>
+                <p>Create, manage and control your Telegram bots from one place</p>
+            </div>
+            <div class="header-logo">
+                <i class="fab fa-telegram"></i>
+            </div>
+        </div>
+
+        <div style="text-align: right; margin-bottom: 30px;">
+            <a href="{{ url_for('add_bot') }}" class="btn">
+                <i class="fas fa-plus btn-icon"></i> Add New Bot
+            </a>
+        </div>
+
+        {% if bots %}
+            <div class="card-container">
+                {% for bot in bots %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">{{ bot[1] }}</h2>
+                            <span class="card-status {% if bot[4] == 1 %}status-active{% else %}status-inactive{% endif %}">
+                                {% if bot[4] == 1 %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fas fa-key"></i> Token: <span class="token-mask" onclick="toggleToken(this)">••••••••••••••••</span></p>
+                            <p><i class="fas fa-info-circle"></i> Description: {{ bot[3] }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ url_for('view_bot', bot_id=bot[0]) }}" class="btn">
+                                <i class="fas fa-cog btn-icon"></i> Manage
+                            </a>
+                            <a href="{{ url_for('toggle_bot', bot_id=bot[0]) }}" class="btn {% if bot[4] == 1 %}btn-danger{% else %}btn-success{% endif %}">
+                                <i class="fas fa-{% if bot[4] == 1 %}stop{% else %}play{% endif %} btn-icon"></i> 
+                                {% if bot[4] == 1 %}Stop{% else %}Start{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="empty-message">You haven't added any bots yet</div>
+                <a href="{{ url_for('add_bot') }}" class="btn">
+                    <i class="fas fa-plus btn-icon"></i> Add Your First Bot
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleToken(element) {
+            const isHidden = element.textContent.includes("•");
+            if (isHidden) {
+                // This would be replaced with the actual token in a real implementation
+                element.textContent = "5673829102:AAGhTdSdFgJkLpZxCvBnMqW";
+                showToast("Token revealed. Keep it secret!");
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    element.textContent = "••••••••••••••••";
+                }, 10000);
+            } else {
+                element.textContent = "••••••••••••••••";
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `
+                <span class="toast-icon"><i class="fas fa-info-circle"></i></span>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = "fadeOutDown 0.5s forwards";
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Simulate page load complete
+        window.addEventListener("load", function() {
+            setTimeout(() => {
+                document.querySelector(".loading-indicator").style.display = "none";
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل البوت | Telegram Bot Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0088cc;
+            --primary-dark: #006699;
+            --secondary: #1e90ff;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230088cc' stroke-width='2'><path d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/></svg>") 0 0, auto;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        button, a, .card {
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230088cc' stroke-width='2'><path d='M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z'/></svg>") 0 0, pointer;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -50px;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -70px;
+            left: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-logo {
+            font-size: 3.5em;
+            animation: pulse 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background-color: #d35400;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-top: 5px solid var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 1em;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.2);
+        }
+
+        .form-control:hover {
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .alerts-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .alert {
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--white);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.5s ease-out forwards;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background-color: var(--success);
+        }
+
+        .alert-danger {
+            background-color: var(--danger);
+        }
+
+        .alert-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .alert-close {
+            margin-right: 15px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary);
+            animation: loading 2s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-dark);
+        }
+
+        .breadcrumb i {
+            color: #999;
+        }
+
+        .breadcrumb span {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .form-hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85em;
+            color: #777;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 12px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+        }
+
+        .toast-icon {
+            margin-left: 10px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .form-instruction {
+            background-color: rgba(41, 128, 185, 0.1);
+            border-right: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #444;
+        }
+
+        .form-instruction i {
+            color: var(--primary);
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-indicator">
+        <div class="loading-bar"></div>
+    </div>
+
+    <div class="alerts-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span class="alert-icon">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+                        </span>
+                        {{ message }}
+                        <span class="alert-close" onclick="this.parentElement.remove()">×</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> الرئيسية</a>
+            <i class="fas fa-chevron-left"></i>
+            <a href="{{ url_for('view_bot', bot_id=bot[0]) }}">{{ bot[1] }}</a>
+            <i class="fas fa-chevron-left"></i>
+            <span>تعديل البوت</span>
+        </div>
+
+        <div class="header">
+            <div>
+                <h1>تعديل البوت</h1>
+                <p>قم بتحديث معلومات البوت الخاص بك</p>
+            </div>
+            <div class="header-logo">
+                <i class="fas fa-edit"></i>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">معلومات البوت</h2>
+            </div>
+            
+            <div class="form-instruction">
+                <i class="fas fa-info-circle"></i>
+                إذا قمت بتغيير توكن البوت، سيتم إعادة تشغيل البوت تلقائيًا بالتوكن الجديد إذا كان نشطًا. تأكد من أن التوكن صحيح وتم إنشاؤه من @BotFather.
+            </div>
+
+            <form action="{{ url_for('edit_bot', bot_id=bot[0]) }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="name">اسم البوت</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ bot[1] }}" required>
+                    <span class="form-hint">اسم وصفي للبوت ليساعدك على تمييزه (لا يظهر للمستخدمين)</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="token">توكن البوت</label>
+                    <div class="input-group">
+                        <input type="password" id="token" name="token" class="form-control" value="{{ bot[2] }}" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <span class="form-hint">توكن البوت الذي حصلت عليه من @BotFather على تلجرام</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">وصف البوت</label>
+                    <textarea id="description" name="description" class="form-control form-textarea" rows="4">{{ bot[3] }}</textarea>
+                    <span class="form-hint">وصف موجز للبوت ووظيفته (اختياري)</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save btn-icon"></i> حفظ التغييرات
+                    </button>
+                    <a href="{{ url_for('view_bot', bot_id=bot[0]) }}" class="btn btn-danger">
+                        <i class="fas fa-times btn-icon"></i> إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const tokenInput = document.getElementById("token");
+            const toggleIcon = document.getElementById("toggleIcon");
+            
+            if (tokenInput.type === "password") {
+                tokenInput.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+                showToast("تم إظهار التوكن. حافظ على سريته!");
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    tokenInput.type = "password";
+                    toggleIcon.classList.remove("fa-eye-slash");
+                    toggleIcon.classList.add("fa-eye");
+                }, 10000);
+            } else {
+                tokenInput.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `
+                <span class="toast-icon"><i class="fas fa-info-circle"></i></span>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = "fadeOutDown 0.5s forwards";
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Simulate page load complete
+        window.addEventListener("load", function() {
+            setTimeout(() => {
+                document.querySelector(".loading-indicator").style.display = "none";
+            }, 1000);
+        });
+
+        // Form validation
+        document.querySelector("form").addEventListener("submit", function(event) {
+            const tokenInput = document.getElementById("token");
+            const nameInput = document.getElementById("name");
+            
+            if (!nameInput.value.trim()) {
+                event.preventDefault();
+                showToast("يرجى إدخال اسم للبوت");
+                nameInput.focus();
+                return false;
+            }
+            
+            if (!tokenInput.value.trim()) {
+                event.preventDefault();
+                showToast("يرجى إدخال توكن البوت");
+                tokenInput.focus();
+                return false;
+            }
+            
+            // Basic token format validation
+            const tokenPattern = /^\d+:[\w-]+$/;
+            if (!tokenPattern.test(tokenInput.value)) {
+                event.preventDefault();
+                showToast("يبدو أن صيغة التوكن غير صحيحة. تأكد من نسخ التوكن بشكل صحيح من BotFather");
+                tokenInput.focus();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Details - Telegram Bot Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #0088cc;
+            --primary-dark: #026aa2;
+            --secondary: #7289da;
+            --success: #43b581;
+            --danger: #f04747;
+            --warning: #faa61a;
+            --dark: #36393f;
+            --light: #f6f6f7;
+            --grey: #72767d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%230088cc' stroke='white' stroke-width='1.5'%3E%3Cpath d='M7 17l9.2-9.2M17 17V7H7'/%3E%3C/svg%3E"), auto;
+        }
+        
+        body {
+            background-color: #eceff1;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 136, 204, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 140px;
+            height: 140px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='120' height='120' fill='rgba(255,255,255,0.1)'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        
+        header .header-content {
+            z-index: 1;
+        }
+        
+        header .actions {
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .bot-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .detail-item i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+        
+        .bot-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .status-active {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .status-inactive {
+            background-color: var(--grey);
+            color: white;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='white' stroke-width='1.5'%3E%3Cpath d='M8 13l2-2 4 4 4-4 2 2-6 6z'/%3E%3C/svg%3E"), pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .flash-container {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert-success {
+            background-color: rgba(67, 181, 129, 0.2);
+            border-left: 4px solid var(--success);
+            color: #2e7d5c;
+        }
+        
+        .alert-danger {
+            background-color: rgba(240, 71, 71, 0.2);
+            border-left: 4px solid var(--danger);
+            color: #c03c3c;
+        }
+        
+        .alert-warning {
+            background-color: rgba(250, 166, 26, 0.2);
+            border-left: 4px solid var(--warning);
+            color: #b17812;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .responses-list {
+            margin-top: 20px;
+        }
+        
+        .response-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .response-item:hover {
+            background-color: #f1f1f1;
+            transform: translateX(5px);
+        }
+        
+        .response-content {
+            flex: 1;
+        }
+        
+        .trigger {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .response {
+            color: var(--dark);
+        }
+        
+        .response-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .edit-btn {
+            background-color: var(--warning);
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--grey);
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .add-response-form {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.2);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            color: var(--grey);
+            font-size: 0.9rem;
+        }
+        
+        .token-display {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        .token-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .copy-btn:hover {
+            color: var(--primary-dark);
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .response-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .response-actions {
+                margin-top: 15px;
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <a href="{{ url_for('index') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Bots
+                </a>
+                <h1>{{ bot[1] }}</h1>
+                <p class="subtitle">
+                    {% if bot[4] == 1 %}
+                        <span class="bot-status status-active">
+                            <i class="fas fa-circle"></i> Active
+                        </span>
+                    {% else %}
+                        <span class="bot-status status-inactive">
+                            <i class="fas fa-circle"></i> Inactive
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="actions">
+                <a href="{{ url_for('edit_bot', bot_id=bot[0]) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Bot
+                </a>
+                <a href="{{ url_for('toggle_bot', bot_id=bot[0]) }}" class="btn {% if bot[4] == 1 %}btn-warning{% else %}btn-success{% endif %}">
+                    {% if bot[4] == 1 %}
+                        <i class="fas fa-stop"></i> Stop Bot
+                    {% else %}
+                        <i class="fas fa-play"></i> Start Bot
+                    {% endif %}
+                </a>
+                <a href="{{ url_for('delete_bot', bot_id=bot[0]) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this bot? This will delete all responses too.')">
+                    <i class="fas fa-trash"></i> Delete Bot
+                </a>
+            </div>
+        </header>
+        
+        <div class="flash-container">
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="alert alert-{{ category }}">
+                    <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% endif %}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card">
+            <h2>Bot Details</h2>
+            <div class="bot-details">
+                <div class="detail-item">
+                    <i class="fas fa-robot"></i>
+                    <strong>Name:</strong> {{ bot[1] }}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-key"></i>
+                    <div>
+                        <strong>Token:</strong>
+                        <div class="token-display">
+                            <span class="token-text">{{ bot[2] }}</span>
+                            <button class="copy-btn" onclick="copyToken('{{ bot[2] }}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Description:</strong> {{ bot[3] if bot[3] else 'No description' }}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-comment-dots"></i>
+                    <strong>Responses:</strong> {{ responses|length }}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-toggle-on"></i>
+                    <strong>Status:</strong>
+                    {% if bot[4] == 1 %}
+                        <span class="bot-status status-active">Active</span>
+                    {% else %}
+                        <span class="bot-status status-inactive">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="section-header">
+                <h2>Response Rules</h2>
+                <button id="showAddResponseFormBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Response
+                </button>
+            </div>
+            
+            <div id="addResponseForm" class="add-response-form">
+                <h3>Add New Response</h3>
+                <form action="{{ url_for('add_response', bot_id=bot[0]) }}" method="POST">
+                    <div class="form-group">
+                        <label for="trigger">Trigger Word/Phrase</label>
+                        <input type="text" id="trigger" name="trigger" required placeholder="When user sends this...">
+                    </div>
+                    <div class="form-group">
+                        <label for="response">Bot Response</label>
+                        <textarea id="response" name="response" required placeholder="Bot will reply with this..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> Save Response
+                    </button>
+                    <button type="button" id="cancelAddResponse" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </form>
+            </div>
+            
+            {% if responses %}
+                <div class="responses-list">
+                    {% for response in responses %}
+                    <div class="response-item">
+                        <div class="response-content">
+                            <div class="trigger">
+                                <i class="fas fa-arrow-right"></i> {{ response[1] }}
+                            </div>
+                            <div class="response">
+                                <i class="fas fa-reply"></i> {{ response[2] }}
+                            </div>
+                        </div>
+                        <div class="response-actions">
+                            <a href="{{ url_for('delete_response', response_id=response[0], bot_id=bot[0]) }}" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this response?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-comment-slash"></i>
+                    <h3>No Responses Yet</h3>
+                    <p>Add your first response rule to tell your bot how to reply to messages</p>
+                    <button id="emptyStateAddBtn" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus"></i> Add Response
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+        
+        <footer>
+            <p>Telegram Bot Manager &copy; 2025 | Powered by Flask</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const showAddResponseFormBtn = document.getElementById('showAddResponseFormBtn');
+            const addResponseForm = document.getElementById('addResponseForm');
+            const cancelAddResponse = document.getElementById('cancelAddResponse');
+            const emptyStateAddBtn = document.getElementById('emptyStateAddBtn');
+            
+            function toggleAddResponseForm() {
+                addResponseForm.style.display = addResponseForm.style.display === 'block' ? 'none' : 'block';
+            }
+            
+            if (showAddResponseFormBtn) {
+                showAddResponseFormBtn.addEventListener('click', toggleAddResponseForm);
+            }
+            
+            if (cancelAddResponse) {
+                cancelAddResponse.addEventListener('click', toggleAddResponseForm);
+            }
+            
+            if (emptyStateAddBtn) {
+                emptyStateAddBtn.addEventListener('click', toggleAddResponseForm);
+            }
+            
+            // Auto-hide flash messages after 5 seconds
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+        
+        function copyToken(token) {
+            navigator.clipboard.writeText(token).then(function() {
+                alert('Token copied to clipboard!');
+            }, function() {
+                alert('Failed to copy token');
+            });
+        }
+    </script>
+</body>
+</html>
